@@ -1,0 +1,88 @@
+blueprint:
+  name: ZHA - AwoX ERCU_WS_Zm Custom Actions
+  description: >
+    Blueprint for the AwoX ERCU_WS_Zm Zigbee remote.
+    Supports ON/OFF, brightness up and brightness down.
+    Allows multiple identical remotes to be used.
+  domain: automation
+  author: ChatGPT
+
+  input:
+    remote:
+      name: AwoX Remotes
+      description: Select one or more AwoX ERCU_WS_Zm remotes.
+      selector:
+        device:
+          integration: zha
+          model: ERCU_WS_Zm
+          multiple: true
+
+    button_toggle:
+      name: ON/OFF
+      description: Action to run when the ON/OFF button is pressed.
+      default: []
+      selector:
+        action: {}
+
+    button_up:
+      name: Brightness Up
+      description: Action to run when the brightness up button is pressed.
+      default: []
+      selector:
+        action: {}
+
+    button_down:
+      name: Brightness Down
+      description: Action to run when the brightness down button is pressed.
+      default: []
+      selector:
+        action: {}
+
+mode: restart
+
+trigger:
+  - platform: event
+    event_type: zha_event
+
+variables:
+  selected_devices: !input remote
+
+condition:
+  - condition: template
+    value_template: >
+      {{ trigger.event.data.device_id in selected_devices }}
+
+action:
+  - choose:
+
+      # ON/OFF
+      - conditions:
+          - condition: template
+            value_template: >
+              {{
+                trigger.event.data.cluster_id == 6
+                and trigger.event.data.command == 'toggle'
+              }}
+        sequence: !input button_toggle
+
+      # BRIGHTNESS UP
+      - conditions:
+          - condition: template
+            value_template: >
+              {{
+                trigger.event.data.cluster_id == 8
+                and trigger.event.data.command == 'step_with_on_off'
+                and trigger.event.data.args[0] == 0
+              }}
+        sequence: !input button_up
+
+      # BRIGHTNESS DOWN
+      - conditions:
+          - condition: template
+            value_template: >
+              {{
+                trigger.event.data.cluster_id == 8
+                and trigger.event.data.command == 'step'
+                and trigger.event.data.args[0] == 1
+              }}
+        sequence: !input button_down
