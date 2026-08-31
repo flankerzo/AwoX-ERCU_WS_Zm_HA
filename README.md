@@ -30,7 +30,7 @@ In Home Assistant:
 
 1. Go to **Settings → Automations & Scenes → Blueprints**.
 2. Import the blueprint from this repository.
-https://raw.githubusercontent.com/flankerzo/AwoX-ERCU_WS_Zm_HA/main/ZHA%20-%20AwoX%20ERCU_WS_Zm%20Custom%20Actions.yaml
+https://raw.githubusercontent.com/flankerzo/AwoX-ERCU_WS_Zm_HA/main/ZHA-AwoX_ERCU_WS_Zm.yaml
 
 Alternatively, copy the YAML file manually to:
 
